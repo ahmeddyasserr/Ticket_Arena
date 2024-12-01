@@ -1,0 +1,7 @@
+.main-section {
+    position: relative;
+    height: 700px;
+    background-image: url(./imgs/pexels-bohlemedia-1884574.jpg);
+    background-size: cover;
+    background-position: center;
+}
