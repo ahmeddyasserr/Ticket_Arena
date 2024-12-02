@@ -92,6 +92,11 @@ function HomeNav() {
                 Contact Us
               </Link>
             </Nav.Link>
+            <Nav.Link>
+              <Link to="/News" className="text-decoration-none">
+                News
+              </Link>
+            </Nav.Link>
             {/* User Dropdown */}
             <NavDropdown
               title={

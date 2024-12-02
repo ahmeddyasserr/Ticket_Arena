@@ -9,6 +9,7 @@ import About from "./src/components/About";
 import Contact from "./src/components/Contact";
 import Highlights from "./src/components/Highlights";
 import ForgetPassword from "./src/components/ForgetPassword";
+import News from "./src/components/News";
 
 // Define the Layout component here
 const Layout = ({ children }) => {
@@ -90,6 +91,14 @@ const router = createBrowserRouter([
     element: (
       <Layout>
         <ForgetPassword />
+      </Layout>
+    ),
+  },
+  {
+    path: "/News",
+    element: (
+      <Layout>
+        <News />
       </Layout>
     ),
   },

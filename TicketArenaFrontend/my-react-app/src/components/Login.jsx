@@ -47,7 +47,7 @@ function Login() {
 
   return (
     <>
-      <HomeNav />
+      {/* <HomeNav /> */}
       <Form className="border p-5 m-5 rounded-5 shadow" onSubmit={login}>
         <h1>Login:</h1>
         <hr />

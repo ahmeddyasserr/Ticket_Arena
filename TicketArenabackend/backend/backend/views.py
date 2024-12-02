@@ -7,45 +7,55 @@ from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
+from django.http import JsonResponse
 
 
 @api_view(['POST'])
 def signup(request):
     try:
+        # Get data from request
         username = request.data.get('username')
         email = request.data.get('email')
         password = request.data.get('password')
         confirm_password = request.data.get('confirm_password')
+        league = request.data.get('league')  # League from frontend
+        favorite_team = request.data.get('favorite_team')  # Team from frontend
 
-        if not username or not email or not password or not confirm_password:
-            return Response({"error": "All fields are required."}, status=status.HTTP_400_BAD_REQUEST)
+        # Basic validations
+        if not username or not email or not password or not confirm_password or not league or not favorite_team:
+            return JsonResponse({"error": "All fields are required."}, status=status.HTTP_400_BAD_REQUEST)
 
         if password != confirm_password:
-            return Response({"error": "Passwords do not match."}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"error": "Passwords do not match."}, status=status.HTTP_400_BAD_REQUEST)
 
         if User.objects.filter(username=username).exists():
-            return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
 
         if User.objects.filter(email=email).exists():
-            return Response({"error": "Email already exists."}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse({"error": "Email already exists."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create the user
+        # Create user
         user = User.objects.create_user(username=username, email=email, password=password)
 
-        # Generate token
-        token = Token.objects.create(user=user)
-        return Response({
-            "message": "User created successfully.",
+        # Generate an authentication token
+        token, created = Token.objects.get_or_create(user=user)
+
+        # Log or store league and team info if needed (here it's just included in the response)
+        return JsonResponse({
+            "message": "Signup successful.",
             "token": token.key,
             "user": {
                 "id": user.id,
                 "username": user.username,
                 "email": user.email,
+                "league": league,
+                "favorite_team": favorite_team,
             }
         }, status=status.HTTP_201_CREATED)
 
     except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 @api_view(['POST'])
@@ -105,7 +115,7 @@ def reset_password(request):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
 
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])

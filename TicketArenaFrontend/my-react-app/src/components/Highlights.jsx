@@ -46,6 +46,7 @@ const Highlights = () => {
   ];
 
   return (
+    <>
     <Container className="my-5">
       <h1 className="text-center mb-4">Match Highlights</h1>
       <Row xs={1} md={2} lg={3} className="g-4">
@@ -69,6 +70,11 @@ const Highlights = () => {
         ))}
       </Row>
     </Container>
+     {/* Footer */}
+     <footer className="text-center my-2">
+     Copyright &copy; 2024 - All rights reserved To Ticket Arena.
+   </footer>
+   </>
   );
 };
 

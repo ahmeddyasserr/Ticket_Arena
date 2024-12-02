@@ -43,6 +43,7 @@ function FootballStandings() {
   }, [league, season]);
 
   return (
+    <>
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h1 style={{ textAlign: "center" }}>Football League Standings</h1>
 
@@ -109,6 +110,11 @@ function FootballStandings() {
         </tbody>
       </table>
     </div>
+     {/* Footer */}
+     <footer className="text-center my-2">
+    Copyright &copy; 2024 - All rights reserved To Ticket Arena.
+  </footer>
+  </>
   );
 }
 
