@@ -7,4 +7,5 @@ urlpatterns = [
     re_path('login/', views.login),
     re_path('signup/', views.signup),
     re_path('reset_password/', views.reset_password),
+     re_path('logout/', views.logout), 
 ]

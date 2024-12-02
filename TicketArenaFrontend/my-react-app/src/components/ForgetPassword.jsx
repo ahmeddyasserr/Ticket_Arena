@@ -1,17 +1,23 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import HomeNav from "./HomeNav";
+import { useNavigate } from "react-router-dom";
+
 
 function ForgetPassword() {
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const navigate = useNavigate();
 
   const resetPassword = async (e) => {
     e.preventDefault();
 
     if (newPassword !== confirmPassword) {
+      setIsSuccess(false);
       setMessage("Passwords do not match!");
       return;
     }
@@ -31,12 +37,16 @@ function ForgetPassword() {
 
       if (response.ok) {
         const data = await response.json();
-        setMessage(data.message || "Password reset successful!");
+        setIsSuccess(true);
+        setMessage(data.message + " Redirecting...");
+        setTimeout(() => navigate("/login"), 2000);
       } else {
+        setIsSuccess(false);
         const errorData = await response.json();
-        setMessage(errorData.error || "Error resetting password. Please try again.");
+        setMessage(errorData.error );
       }
     } catch (error) {
+      setIsSuccess(false);
       setMessage("Network error occurred. Please try again later.");
       console.error("Error:", error);
     }
@@ -81,7 +91,17 @@ function ForgetPassword() {
         <Button variant="primary" type="submit">
           Reset Password
         </Button>
-        {message && <p className="mt-3 text-danger">{message}</p>}
+        {message && (
+          <p
+            className="mt-3"
+            style={{
+              color: isSuccess ? "green" : "red", 
+            }}
+          >
+            {message}
+          </p>
+        )}
+        
       </Form>
     </>
   );

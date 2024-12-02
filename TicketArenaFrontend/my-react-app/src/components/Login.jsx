@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import HomeNav from "./HomeNav";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -29,7 +29,10 @@ function Login() {
         const data = await response.json();
         setMessage("Login successful! Redirecting...");
         setIsSuccess(true); // Indicate success
+        localStorage.setItem("user",JSON.stringify(data));
+        
         setTimeout(() => navigate("/"), 2000);
+
       } else {
         const errorData = await response.json();
         setMessage(errorData.error || "Invalid credentials.");
@@ -68,6 +71,8 @@ function Login() {
             required
           />
         </Form.Group>
+        <Link to="/forget-password" className="d-block text-decoration-none mb-3">Did you forget your password?</Link>
+
         <Button variant="primary" type="submit">
           Login
         </Button>
@@ -75,7 +80,7 @@ function Login() {
           <p
             className="mt-3"
             style={{
-              color: isSuccess ? "green" : "red", // Conditional styling for success or error
+              color: isSuccess ? "green" : "red", 
             }}
           >
             {message}
