@@ -2,7 +2,6 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import Placeholder from "react-bootstrap/Placeholder";
-import Navbar from "./components/HomeNav";
 import { Link } from "react-router-dom";
 
 function App() {
@@ -10,9 +9,6 @@ function App() {
 
   return (
     <>
-      {/* Navbar */}
-      <Navbar />
-
       {/* Main Section */}
       <section className="main-section">
         <h1 className="display-2 text-center text-white position-absolute top-50 start-50 translate-middle w-100">
@@ -82,3 +78,4 @@ function App() {
 }
 
 export default App;
+

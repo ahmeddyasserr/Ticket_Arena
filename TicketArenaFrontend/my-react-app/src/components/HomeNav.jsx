@@ -126,12 +126,12 @@ function HomeNav() {
                 : (
                   <>
                       <NavDropdown.Item>
-                    <Link to="/login" className="text-decoration-none text-black d-block">
+                    <Link to="/login" className="text-decoration-none text-secondary d-block">
                         Login
                     </Link>
                       </NavDropdown.Item>
                       <NavDropdown.Item>
-                    <Link to="/sign-up" className=" text-decoration-none text-black d-block">
+                    <Link to="/sign-up" className=" text-decoration-none text-secondary d-block">
                         Sign Up
                     </Link>
                       </NavDropdown.Item>
