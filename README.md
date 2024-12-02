@@ -20,6 +20,9 @@ Ticket booking, real-time availability, secure payment processing, profile manag
 
 # How it works?
 1- Download the folder in repository 
-2- open terminal/cmd and wirte command : cd path/to/folder
+
+2- open terminal/cmd and wirte command : cd path/to/frontend folder
+
 3- run this command : npm run dev 
-4- after that open terminal in vscode and run the backend by command: python manage.py runserver
+
+4- after that open terminal in vscode and run the backend folder by command: python manage.py runserver
