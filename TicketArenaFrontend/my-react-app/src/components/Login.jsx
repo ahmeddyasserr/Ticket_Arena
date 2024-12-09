@@ -7,7 +7,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false); // To differentiate success and error messages
+  const [isSuccess, setIsSuccess] = useState(false); 
   const navigate = useNavigate();
 
   const login = async (e) => {
@@ -31,7 +31,10 @@ function Login() {
         setIsSuccess(true); // Indicate success
         localStorage.setItem("user",JSON.stringify(data));
         
-        setTimeout(() => navigate("/"), 2000);
+        setTimeout(() => {
+          navigate("/"); 
+          window.location.reload(); 
+        }, 2000);
 
       } else {
         const errorData = await response.json();

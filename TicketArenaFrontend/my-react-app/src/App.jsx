@@ -61,7 +61,7 @@ function App() {
       {/* Today's Games Section */}
       <div id="todayGames">
         {loading ? (
-          // Placeholder Content
+          
           [...Array(3)].map((_, index) => (
             <div key={index} className="border p-2 m-2 my-4 text-center">
               <Placeholder as={Card.Text} animation="glow">

@@ -18,8 +18,8 @@ def signup(request):
         email = request.data.get('email')
         password = request.data.get('password')
         confirm_password = request.data.get('confirm_password')
-        league = request.data.get('league')  # League from frontend
-        favorite_team = request.data.get('favorite_team')  # Team from frontend
+        league = request.data.get('league')  
+        favorite_team = request.data.get('favorite_team')  
 
         # Basic validations
         if not username or not email or not password or not confirm_password or not league or not favorite_team:

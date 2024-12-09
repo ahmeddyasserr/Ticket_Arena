@@ -54,7 +54,7 @@ function ForgetPassword() {
 
   return (
     <>
-      <HomeNav />
+      
       <Form className="border p-5 m-5 rounded-5 shadow" onSubmit={resetPassword}>
         <h1>Forget Password:</h1>
         <hr />

@@ -1,5 +1,5 @@
 import React from "react";
-import "../index.css"; // For custom styling
+import "../index.css"; 
 import hansiFlickImage from "/public/imgs/Hansi Flick Barcelona 110224.jpg"; 
 import MohamedSalah from "/public/imgs/Mo-Salah.png";
 import pep from "/public/imgs/Guardiola.png";

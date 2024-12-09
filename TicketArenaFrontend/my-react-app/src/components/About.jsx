@@ -24,27 +24,34 @@ const About = () => {
 
       {/* Meet the Developers Container */}
       <Container className="meet-developers-container border p-5 m-5 rounded-5 shadow">
-        <h2>Meet the Developers</h2>
-        <Row>
-          {/* Developer Cards */}
-          {['Abdulkhaliq', 'Ebaid', 'Kareem', 'Saleh', 'Yasser'].map((developer, index) => (
-            <Col md={4} key={index}>
-              <Card className="developer-card mb-4 shadow-sm">
-                <Card.Img
-                  variant="top"
-                  src={`public/imgs/${developer}.jpg`}
-                  alt={`Developer ${developer}`}
-                  className="developer-image"
-                />
-                <Card.Body>
-                  <Card.Title>{`Developer ${developer}`}</Card.Title>
-                  <Card.Text>{index % 2 === 0 ? "Backend Developer" : "Frontend Developer"}</Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Container>
+  <h2>Meet the Developers</h2>
+  <Row>
+    {/* Developer Cards */}
+    {[
+      { name: "Abdulkhaliq", role: "Backend Developer" },
+      { name: "Ebaid", role: "Backend Developer" },
+      { name: "Kareem", role: "Frontend Developer" },
+      { name: "Saleh", role: "Frontend Developer" },
+      { name: "Yasser", role: "Backend Developer" },
+    ].map((developer, index) => (
+      <Col md={4} key={index}>
+        <Card className="developer-card mb-4 shadow-sm">
+          <Card.Img
+            variant="top"
+            src={`public/imgs/${developer.name}.jpg`}
+            alt={`Developer ${developer.name}`}
+            className="developer-image"
+          />
+          <Card.Body>
+            <Card.Title>{`Developer ${developer.name}`}</Card.Title>
+            <Card.Text>{developer.role}</Card.Text>
+          </Card.Body>
+        </Card>
+      </Col>
+    ))}
+  </Row>
+</Container>
+
        {/* Footer */}
     <footer className="text-center my-2">
     Copyright &copy; 2024 - All rights reserved To Ticket Arena.
