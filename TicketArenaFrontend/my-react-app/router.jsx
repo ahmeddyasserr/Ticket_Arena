@@ -10,8 +10,12 @@ import Contact from "./src/components/Contact";
 import Highlights from "./src/components/Highlights";
 import ForgetPassword from "./src/components/ForgetPassword";
 import News from "./src/components/News";
+import Cart from "./src/components/Cart";
+import Checkout from "./src/components/Checkout";
+import Profile from "./src/components/Profile";
+import Tickets from "./src/components/Tickets";
 
-// Define the Layout component here
+// Layout component for shared navigation
 const Layout = ({ children }) => {
   return (
     <>
@@ -21,6 +25,7 @@ const Layout = ({ children }) => {
   );
 };
 
+// Router definition
 const router = createBrowserRouter([
   {
     path: "/",
@@ -95,10 +100,42 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/News",
+    path: "/cart",
+    element: (
+      <Layout>
+        <Cart />
+      </Layout>
+    ),
+  },
+  {
+    path: "/news",
     element: (
       <Layout>
         <News />
+      </Layout>
+    ),
+  },
+  {
+    path: "/checkout",
+    element: (
+      <Layout>
+        <Checkout />
+      </Layout>
+    ),
+  },
+  {
+    path: "/tickets/:matchId", // Dynamic route for Tickets
+    element: (
+      <Layout>
+        <Tickets />
+      </Layout>
+    ),
+  },
+  {
+    path: "/profile",
+    element: (
+      <Layout>
+        <Profile />
       </Layout>
     ),
   },

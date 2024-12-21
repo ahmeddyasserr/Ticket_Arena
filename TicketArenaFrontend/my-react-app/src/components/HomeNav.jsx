@@ -5,11 +5,11 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
-
 function HomeNav() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+
   function logout() {
-    const token = user.token;
+    const token = user?.token;
 
     if (!token) {
       console.error("No token found!");
@@ -41,12 +41,7 @@ function HomeNav() {
   }
 
   return (
-    <Navbar
-      sticky="top"
-      collapseOnSelect
-      expand="lg"
-      className="bg-body-tertiary"
-    >
+    <Navbar sticky="top" collapseOnSelect expand="lg" className="bg-body-tertiary">
       <Container>
         <Navbar.Brand>
           <Link to="/" className="text-decoration-none">
@@ -63,39 +58,28 @@ function HomeNav() {
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ms-auto">
             {/* Home Link */}
-            <Nav.Link>
-              <Link to="/" className="text-decoration-none">
-                Home
-              </Link>
+            <Nav.Link as={Link} to="/">
+              Home
             </Nav.Link>
             {/* Tables Button */}
-            <Nav.Link>
-              <Link to="/tables" className="text-decoration-none">
-                Tables
-              </Link>
+            <Nav.Link as={Link} to="/tables">
+              Tables
             </Nav.Link>
             {/* Shop Button */}
-            <Nav.Link>
-              <Link to="/shop" className="text-decoration-none">
-                Shop
-              </Link>
+            <Nav.Link as={Link} to="/shop">
+              Shop
             </Nav.Link>
             {/* About Us Link */}
-            <Nav.Link>
-              <Link to="/about" className="text-decoration-none">
-                About Us
-              </Link>
+            <Nav.Link as={Link} to="/about">
+              About Us
             </Nav.Link>
             {/* Contact Us Link */}
-            <Nav.Link>
-              <Link to="/contact" className="text-decoration-none">
-                Contact Us
-              </Link>
+            <Nav.Link as={Link} to="/contact">
+              Contact Us
             </Nav.Link>
-            <Nav.Link>
-              <Link to="/News" className="text-decoration-none">
-                News
-              </Link>
+            {/* News Link */}
+            <Nav.Link as={Link} to="/news">
+              News
             </Nav.Link>
             {/* User Dropdown */}
             <NavDropdown
@@ -115,33 +99,27 @@ function HomeNav() {
             >
               {user ? (
                 <>
-                  <Link to="/profile" className="text-decoration-none text-black d-block">
-                    <NavDropdown.Item>
-                      Profile
-                    </NavDropdown.Item>
-                  </Link>
-
+                  <NavDropdown.Item as={Link} to="/profile">
+                    Profile
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/cart">
+                    Cart
+                  </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={logout}>
-                    <Link to="/" className="text-decoration-none text-black">
-                      Log Out
-                    </Link>
+                    Log Out
                   </NavDropdown.Item>
-                </>)
-                : (
-                  <>
-                      <NavDropdown.Item>
-                    <Link to="/login" className="text-decoration-none text-secondary d-block">
-                        Login
-                    </Link>
-                      </NavDropdown.Item>
-                      <NavDropdown.Item>
-                    <Link to="/sign-up" className=" text-decoration-none text-secondary d-block">
-                        Sign Up
-                    </Link>
-                      </NavDropdown.Item>
-                  </>
-                )}
+                </>
+              ) : (
+                <>
+                  <NavDropdown.Item as={Link} to="/login">
+                    Login
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/sign-up">
+                    Sign Up
+                  </NavDropdown.Item>
+                </>
+              )}
             </NavDropdown>
           </Nav>
         </Navbar.Collapse>

@@ -1,37 +1,42 @@
-
-
 import React, { useState, useEffect } from "react";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
-import Placeholder from "react-bootstrap/Placeholder";
-import Modal from "react-bootstrap/Modal";
-import { Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Row, Col, Container, Card, Button } from "react-bootstrap";
+import { useNavigate, Link } from "react-router-dom";
 
 function App() {
+  const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [liveMatches, setLiveMatches] = useState([]);
-  const [selectedMatch, setSelectedMatch] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate(); // Hook for navigation
 
-  // Fetch live matches
+  // Fetch matches data from the API
   useEffect(() => {
-    const fetchLiveMatches = async () => {
+    const fetchMatches = async () => {
       try {
-        const response = await fetch("https://www.sofascore.com/api/v1/sport/football/events/live");
+        const response = await fetch("http://127.0.0.1:8000/matches/");
         const data = await response.json();
-        setLiveMatches(data.events || []);
+        setMatches(data);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching live matches:", error);
+        console.error("Error fetching matches:", error);
         setLoading(false);
       }
     };
-    fetchLiveMatches();
+    fetchMatches();
   }, []);
 
-  const handleDetails = (match) => {
-    setSelectedMatch(match);
-    setShowModal(true);
+  const handleViewTickets = async (matchId) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/matches/${matchId}/categories/`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+      const data = await response.json();
+
+      // Navigate to the Tickets page with fetched data
+      navigate(`/tickets/${matchId}`, { state: { match: data.match, categories: data.categories } });
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
   };
 
   return (
@@ -43,87 +48,91 @@ function App() {
         </h1>
       </section>
 
-      {/* Get Started Button */}
-      <Link to="/highlights" style={{ textDecoration: "none" }}>
-        <Button
-          variant="outline-secondary"
-          size="lg"
-          className="d-flex mx-auto my-4 rounded-pill"
-          type="button"
-        >
-          GET STARTED
-        </Button>
-      </Link>
-
-      {/* Live Matches Title */}
-      <h2 className="text-center my-4">Live Matches</h2>
-
-      {/* Today's Games Section */}
-      <div id="todayGames">
-        {loading ? (
-          
-          [...Array(3)].map((_, index) => (
-            <div key={index} className="border p-2 m-2 my-4 text-center">
-              <Placeholder as={Card.Text} animation="glow">
-                <Placeholder xs={7} /> <Placeholder xs={4} /> <Placeholder xs={4} />
-                <Placeholder xs={6} /> <Placeholder xs={8} />
-              </Placeholder>
-              <Placeholder.Button xs={5} aria-hidden="true" />
-            </div>
-          ))
-        ) : liveMatches.length > 0 ? (
-          // Live Matches
-          liveMatches.map((match) => (
-            <Card className="p-2 m-2 my-4 text-center" key={match.id}>
-              <Card.Body>
-                <Card.Title>
-                  {match.homeTeam.name} VS {match.awayTeam.name}
-                </Card.Title>
-                <Card.Text>
-                  Score: {match.homeScore.current} - {match.awayScore.current}
-                </Card.Text>
-                <Button variant="primary" onClick={() => handleDetails(match)}>
-                  Details
-                </Button>
-              </Card.Body>
-              <Card.Footer className="text-muted">
-                {new Date(match.startTimestamp * 1000).toLocaleString()}
-              </Card.Footer>
-            </Card>
-          ))
-        ) : (
-          <p className="text-center text-muted">No live matches available.</p>
-        )}
-      </div>
-
-      {/* Match Details Modal */}
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Match Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedMatch && (
-            <>
-              <h5>
-                {selectedMatch.homeTeam.name} VS {selectedMatch.awayTeam.name}
-              </h5>
-              <p>
-                Score: {selectedMatch.homeScore.current} - {selectedMatch.awayScore.current}
-              </p>
-              <p>Start Time: {new Date(selectedMatch.startTimestamp * 1000).toLocaleString()}</p>
-              <p>Venue: {selectedMatch.venue?.name || "N/A"}</p>
-            </>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Close
+      {/* GET STARTED Button */}
+      <Container className="text-center my-4">
+        <Link to="/highlights" style={{ textDecoration: "none" }}>
+          <Button variant="outline-secondary" size="lg" className="rounded-pill">
+            GET STARTED
           </Button>
-        </Modal.Footer>
-      </Modal>
+        </Link>
+      </Container>
 
-      {/* Footer */}
-      <footer className="text-center my-2">
+      <Container>
+        <h2 className="text-center my-4">Upcoming Matches</h2>
+        {loading ? (
+          <p className="text-center text-muted">Loading matches...</p>
+        ) : matches.length > 0 ? (
+          <Row className="gy-3">
+            {matches.map((match) => (
+              <Col key={match.id} md={12}>
+                <Card className="shadow-sm p-3">
+                  <Row className="align-items-center">
+                    <Col xs={3} className="text-center">
+                      <img
+                        src={`http://127.0.0.1:8000${match.team1_logo}`}
+                        alt={match.team1}
+                        className="img-fluid"
+                        style={{
+                          maxWidth: "80px",
+                          height: "80px",
+                          objectFit: "contain",
+                        }}
+                      />
+                      <h6 className="mt-2">{match.team1}</h6>
+                    </Col>
+                    <Col xs={6} className="text-center">
+                      <p className="fw-bold mb-1">
+                        <span className="fs-5">{match.team1}</span> VS{" "}
+                        <span className="fs-5">{match.team2}</span>
+                      </p>
+                      <p className="text-muted mb-1">
+                        <strong>Stadium:</strong> {match.stadium}
+                      </p>
+                      <p className="text-muted mb-1">
+                        <strong>Date:</strong> {match.date}
+                      </p>
+                      <p className="text-muted">
+                        <strong>Time:</strong> {match.time}
+                      </p>
+                    </Col>
+                    <Col xs={3} className="text-center">
+                      <img
+                        src={`http://127.0.0.1:8000${match.team2_logo}`}
+                        alt={match.team2}
+                        className="img-fluid"
+                        style={{
+                          maxWidth: "80px",
+                          height: "80px",
+                          objectFit: "contain",
+                        }}
+                      />
+                      <h6 className="mt-2">{match.team2}</h6>
+                    </Col>
+                  </Row>
+                  <Row className="mt-2">
+                    <Col className="text-center">
+                      <p className="text-muted mb-0">
+                        <strong>League:</strong> {match.league}
+                      </p>
+                      <Button
+                        variant="primary"
+                        className="mt-3"
+                        onClick={() => handleViewTickets(match.id)}
+                      >
+                        View Tickets
+                      </Button>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        ) : (
+          <p className="text-center text-muted">No matches available.</p>
+        )}
+      </Container>
+
+      <footer className="text-center py-3">
         Copyright &copy; 2024 - All rights reserved.
       </footer>
     </>
@@ -131,4 +140,3 @@ function App() {
 }
 
 export default App;
-
