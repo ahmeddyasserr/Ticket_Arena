@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { Button, Table, Container } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [user] = useState(JSON.parse(localStorage.getItem("user"))); // User from localStorage
   const BASE_URL = "http://127.0.0.1:8000";
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchCartItems() {
@@ -76,14 +78,18 @@ const Cart = () => {
     );
   };
 
+  const handleCheckout = () => {
+    navigate("/checkout");
+  };
+
   return (
-    <div className="container my-4">
+    <Container className="my-4">
       <h2 className="text-center mb-4">Your Cart</h2>
       {cartItems.length === 0 ? (
         <p className="text-center text-muted">Your cart is empty.</p>
       ) : (
         <>
-          <table className="table table-bordered">
+          <Table striped bordered hover>
             <thead className="table-primary">
               <tr>
                 <th>Item</th>
@@ -161,23 +167,38 @@ const Cart = () => {
                     ).toFixed(2)}
                   </td>
                   <td>
-                    <button
-                      className="btn btn-danger btn-sm"
+                    <Button
+                      variant="danger"
+                      size="sm"
                       onClick={() => handleRemoveItem(item.id, item.type)}
                     >
                       Remove
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
-          </table>
+          </Table>
           <h4 className="text-end mt-4">
             Grand Total: ${calculateTotal().toFixed(2)}
           </h4>
+          <div className="text-end">
+            <Button
+              variant="primary"
+              className="mt-3"
+              style={{
+                borderRadius: "50px",
+                padding: "12px 40px",
+                fontSize: "18px",
+              }}
+              onClick={handleCheckout}
+            >
+              Check Out
+            </Button>
+          </div>
         </>
       )}
-    </div>
+    </Container>
   );
 };
 

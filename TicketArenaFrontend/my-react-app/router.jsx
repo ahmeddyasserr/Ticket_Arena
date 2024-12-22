@@ -12,7 +12,7 @@ import ForgetPassword from "./src/components/ForgetPassword";
 import News from "./src/components/News";
 import Cart from "./src/components/Cart";
 import Checkout from "./src/components/Checkout";
-import Profile from "./src/components/Profile";
+import EditProfile from "./src/components/edit-profile";
 import Tickets from "./src/components/Tickets";
 
 // Layout component for shared navigation
@@ -135,7 +135,7 @@ const router = createBrowserRouter([
     path: "/profile",
     element: (
       <Layout>
-        <Profile />
+        <EditProfile />
       </Layout>
     ),
   },

@@ -9,6 +9,10 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from .models import Match, Category, Highlight, MatchTicket, Order, CartItem, Profile, News,ShopItem
 from django.db import transaction
+import requests
+from django.conf import settings
+from rest_framework.views import APIView
+import stripe
 
 from .serializers import (
     UserSerializer,
@@ -441,3 +445,39 @@ def get_carts(request):
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+
+
+
+
+# Set Stripe secret key
+stripe.api_key = settings.STRIPE_SECRET_KEY
+class StripeCheckoutView(APIView):
+    def post(self, request):
+        try:
+            cart_items = request.data.get('cart_items', [])
+            line_items = []
+
+            for item in cart_items:
+                line_items.append({
+                    'price_data': {
+                        'currency': 'usd',
+                        'product_data': {
+                            'name': item['name'],
+                            'images': [item['image']],
+                        },
+                        'unit_amount': int(item['price'] * 100),  # Convert dollars to cents
+                    },
+                    'quantity': item['quantity'],
+                })
+
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=line_items,
+                mode='payment',
+                success_url=settings.SITE_URL + '/success',
+                cancel_url=settings.SITE_URL + '/cancel',
+            )
+
+            return Response({'url': checkout_session.url}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

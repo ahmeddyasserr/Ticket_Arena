@@ -1,0 +1,6 @@
+.photo {
+    display: grid;
+    place-items: center;
+    text-align: center;
+    z-index: auto;
+}

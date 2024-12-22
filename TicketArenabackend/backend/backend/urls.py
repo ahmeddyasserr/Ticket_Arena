@@ -1,9 +1,9 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-
+from .views import StripeCheckoutView
 urlpatterns = [
     # Admin URLs
     path('admin/', admin.site.urls),
@@ -38,6 +38,8 @@ path('ticket_cart/remove/<int:item_id>/', views.remove_from_ticket_cart, name='r
 # Get Both Carts
 path('carts/', views.get_carts, name='get_carts'),
 
+# payment URL 
+  path('create-checkout-session', StripeCheckoutView.as_view(), name='stripe-checkout'),
 ]
 
 # Serve media files during development
