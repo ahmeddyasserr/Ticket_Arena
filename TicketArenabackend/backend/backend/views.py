@@ -9,10 +9,10 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from .models import Match, Category, Highlight, MatchTicket, Order, CartItem, Profile, News,ShopItem
 from django.db import transaction
-import requests
-from django.conf import settings
-from rest_framework.views import APIView
-import stripe
+import random
+import string  # Ensure this is imported if you're using `string` for random choices
+
+
 
 from .serializers import (
     UserSerializer,
@@ -443,41 +443,73 @@ def get_carts(request):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def checkout(request):
+    """Process the checkout and save cart details in the order."""
+    try:
+        user = request.user
+        confirmation_number = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+        cart_items = CartItem.objects.filter(user=user)
 
+        if not cart_items.exists():
+            return Response({"error": "Cart is empty."}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Calculate total price
+        total_price = sum(float(item.get_total_price()) for item in cart_items)
 
-
-
-
-# Set Stripe secret key
-stripe.api_key = settings.STRIPE_SECRET_KEY
-class StripeCheckoutView(APIView):
-    def post(self, request):
-        try:
-            cart_items = request.data.get('cart_items', [])
-            line_items = []
-
-            for item in cart_items:
-                line_items.append({
-                    'price_data': {
-                        'currency': 'usd',
-                        'product_data': {
-                            'name': item['name'],
-                            'images': [item['image']],
-                        },
-                        'unit_amount': int(item['price'] * 100),  # Convert dollars to cents
-                    },
-                    'quantity': item['quantity'],
+        # Prepare cart details
+        cart_details = []
+        for item in cart_items:
+            if item.cart_type == 'shop' and item.shop_item:
+                cart_details.append({
+                    "item_name": item.shop_item.name,
+                    "category": item.shop_item.category,
+                    "price": float(item.shop_item.price),  # Convert to float
+                    "quantity": item.quantity,
+                    "total": float(item.get_total_price()),  # Convert to float
+                    "image": request.build_absolute_uri(item.shop_item.image.url) if item.shop_item.image else None
+                })
+            elif item.cart_type == 'ticket' and item.category:
+                cart_details.append({
+                    "item_name": f"{item.category.match.team1} vs {item.category.match.team2}",
+                    "category": item.category.name,
+                    "price": float(item.category.price),  # Convert to float
+                    "quantity": item.quantity,
+                    "total": float(item.get_total_price()),  # Convert to float
+                    "team1_logo": request.build_absolute_uri(item.category.match.team1_logo.url) if item.category.match.team1_logo else None,
+                    "team2_logo": request.build_absolute_uri(item.category.match.team2_logo.url) if item.category.match.team2_logo else None,
                 })
 
-            checkout_session = stripe.checkout.Session.create(
-                payment_method_types=['card'],
-                line_items=line_items,
-                mode='payment',
-                success_url=settings.SITE_URL + '/success',
-                cancel_url=settings.SITE_URL + '/cancel',
-            )
+        # Create the order
+        order = Order.objects.create(
+            user=user,
+            confirmation_number=confirmation_number,
+            cart_details=cart_details,
+            status='pending'
+        )
 
-            return Response({'url': checkout_session.url}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # Clear cart after checkout
+        cart_items.delete()
+
+        return Response({
+            "message": "Checkout successful.",
+            "confirmation_number": confirmation_number,
+            "total_price": total_price,
+            "cart_details": cart_details,
+            "status": "pending"
+        }, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# views.py
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_orders(request):
+    user_orders = Order.objects.filter(user=request.user)
+    serialized_orders = [order.serialize_order_details() for order in user_orders]
+    return Response(serialized_orders, status=status.HTTP_200_OK)

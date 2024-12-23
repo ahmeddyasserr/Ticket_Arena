@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-from .views import StripeCheckoutView
+
 urlpatterns = [
     # Admin URLs
     path('admin/', admin.site.urls),
@@ -27,19 +27,22 @@ urlpatterns = [
     # Shop APIs
     path('shop/', views.get_shop_items, name='get_shop_items'),
 
-# Shop Cart APIs
-path('shop_cart/add/', views.add_to_shop_cart, name='add_to_shop_cart'),
-path('shop_cart/remove/<int:item_id>/', views.remove_from_shop_cart, name='remove_from_shop_cart'),
+    # Shop Cart APIs
+    path('shop_cart/add/', views.add_to_shop_cart, name='add_to_shop_cart'),
+    path('shop_cart/remove/<int:item_id>/', views.remove_from_shop_cart, name='remove_from_shop_cart'),
 
-# Ticket Cart APIs
-path('ticket_cart/add/', views.add_to_ticket_cart, name='add_to_ticket_cart'),
-path('ticket_cart/remove/<int:item_id>/', views.remove_from_ticket_cart, name='remove_from_ticket_cart'),
+    # Ticket Cart APIs
+    path('ticket_cart/add/', views.add_to_ticket_cart, name='add_to_ticket_cart'),
+    path('ticket_cart/remove/<int:item_id>/', views.remove_from_ticket_cart, name='remove_from_ticket_cart'),
 
-# Get Both Carts
-path('carts/', views.get_carts, name='get_carts'),
+    # Get Both Carts
+    path('carts/', views.get_carts, name='get_carts'),
 
-# payment URL 
-  path('create-checkout-session', StripeCheckoutView.as_view(), name='stripe-checkout'),
+    # Checkout API
+    path('checkout/', views.checkout, name='checkout'),
+
+    # User Orders API
+    path('user/orders/', views.get_user_orders, name='user_orders'),
 ]
 
 # Serve media files during development

@@ -78,8 +78,28 @@ const Cart = () => {
     );
   };
 
-  const handleCheckout = () => {
-    navigate("/checkout");
+  // Use the async version of handleCheckout and remove the redundant version
+  const handleCheckout = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/checkout/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Token ${user.token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        navigate("/checkout", { state: { confirmationNumber: data.confirmation_number } });
+      } else {
+        alert(data.error || "Checkout failed.");
+      }
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      alert("An error occurred. Please try again.");
+    }
   };
 
   return (

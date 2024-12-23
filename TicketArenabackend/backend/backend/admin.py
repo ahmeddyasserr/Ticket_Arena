@@ -1,14 +1,13 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
-from django.contrib.auth.admin import UserAdmin
+from django.utils.html import mark_safe
 from .models import Match, Category, Highlight, MatchTicket, Order, Profile, News, ShopItem, CartItem
-
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 
 # Inline for Categories
 class CategoryInline(admin.TabularInline):
     model = Category
     extra = 1
-
 
 # Match Admin
 @admin.register(Match)
@@ -18,44 +17,45 @@ class MatchAdmin(admin.ModelAdmin):
     search_fields = ('team1', 'team2', 'stadium')
     inlines = [CategoryInline]
 
-
 # Highlight Admin
 @admin.register(Highlight)
 class HighlightAdmin(admin.ModelAdmin):
     list_display = ('match_name', 'video_url', 'created_at')
     search_fields = ('match_name',)
 
-
 # Inline for Tickets
 class MatchTicketInline(admin.TabularInline):
     model = MatchTicket
     extra = 0
     readonly_fields = ('match', 'seat_category', 'booked_at')
-
-
 # Inline for Orders
 class OrderInline(admin.TabularInline):
     model = Order
     extra = 0
-    readonly_fields = ('item_name', 'quantity', 'price', 'ordered_at')
+    readonly_fields = ('confirmation_number', 'ordered_at', 'status', 'calculate_total')
+# Order Admin
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('user', 'confirmation_number', 'status', 'ordered_at', 'calculate_total')
+    readonly_fields = ('confirmation_number', 'ordered_at', 'status', 'calculate_total')
+    list_filter = ('status',)
+    search_fields = ('confirmation_number', 'user__username')
 
+    def calculate_total(self, obj):
+        """Retrieve the total price of the order."""
+        return f"${obj.calculate_total():.2f}"
 
-# Inline for Profiles
+    calculate_total.short_description = "Total Price"
+
+# Profile Admin
 class ProfileInline(admin.StackedInline):
     model = Profile
     can_delete = False
     verbose_name_plural = 'Profile'
 
-
-# Custom User Admin to include related models
+# User Admin
 class CustomUserAdmin(UserAdmin):
-    inlines = [ProfileInline, MatchTicketInline, OrderInline]
-
-
-# Unregister the default UserAdmin and register the custom one
-admin.site.unregister(User)
-admin.site.register(User, CustomUserAdmin)
-
+    inlines = [ProfileInline, OrderInline]
 
 # News Admin
 @admin.register(News)
@@ -63,14 +63,12 @@ class NewsAdmin(admin.ModelAdmin):
     list_display = ('title', 'published_at', 'original_url')
     search_fields = ('title',)
 
-
 # ShopItem Admin
 @admin.register(ShopItem)
 class ShopItemAdmin(admin.ModelAdmin):
-    list_display = ('name', 'price', 'stock', 'category')  # Include category in list
+    list_display = ('name', 'price', 'stock', 'category')
     search_fields = ('name',)
-    list_filter = ('category', 'stock')  # Add category to filters
-
+    list_filter = ('category', 'stock')
 
 # CartItem Admin
 @admin.register(CartItem)
@@ -84,3 +82,7 @@ class CartItemAdmin(admin.ModelAdmin):
         'category__match__team2',
     )
     list_filter = ('cart_type', 'added_at')
+
+# Unregister the default User admin and register the customized one
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)

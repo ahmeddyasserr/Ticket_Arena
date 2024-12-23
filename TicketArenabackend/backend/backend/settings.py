@@ -132,8 +132,3 @@ if DEBUG:
             'level': 'DEBUG',
         },
     }
-
-SITE_URL ='http://localhost:5173/'
-
-STRIPE_SECRET_KEY ='sk_test_51QYf13Kb4KIGXmoIb40fhqaJJqpOr4GvFaYKHGJhusjtaOF1iB546O3ppJaRHRwaEjCKLYAS6SIqPNWAWlFSo9Py00B0hEtzpT'
-stripe_secret_key = os.getenv('STRIPE_SECRET_KEY', 'default-fallback-key')
