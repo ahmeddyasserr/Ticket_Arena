@@ -33,11 +33,12 @@ class OrderInline(admin.TabularInline):
     model = Order
     extra = 0
     readonly_fields = ('confirmation_number', 'ordered_at', 'status', 'calculate_total')
+
 # Order Admin
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('user', 'confirmation_number', 'status', 'ordered_at', 'calculate_total')
-    readonly_fields = ('confirmation_number', 'ordered_at', 'status', 'calculate_total')
+    readonly_fields = ('confirmation_number', 'ordered_at', 'formatted_cart_details', 'calculate_total')
     list_filter = ('status',)
     search_fields = ('confirmation_number', 'user__username')
 
@@ -46,6 +47,28 @@ class OrderAdmin(admin.ModelAdmin):
         return f"${obj.calculate_total():.2f}"
 
     calculate_total.short_description = "Total Price"
+
+    def formatted_cart_details(self, obj):
+        """Format the cart details into a readable HTML format."""
+        if not obj.cart_details:
+            return "No items"
+
+        details = "<ul>"
+        for item in obj.cart_details:
+            details += f"""
+                <li>
+                    <strong>{item['item_name']}</strong><br>
+                    Category: {item['category']}<br>
+                    Price: ${item['price']}<br>
+                    Quantity: {item['quantity']}<br>
+                    Total: ${item['total']}
+                </li>
+                <hr>
+            """
+        details += "</ul>"
+        return mark_safe(details)
+
+    formatted_cart_details.short_description = "Cart Details"
 
 # Profile Admin
 class ProfileInline(admin.StackedInline):
@@ -86,3 +109,7 @@ class CartItemAdmin(admin.ModelAdmin):
 # Unregister the default User admin and register the customized one
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
+
+
+
+
