@@ -1,0 +1,87 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  frontend:
+    name: Build and Test React Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.18.0
+
+    - name: Install dependencies
+      run: |
+        cd TicketArenaFrontend/my-react-app
+        npm install
+
+    - name: Run tests
+      run: |
+        cd TicketArenaFrontend/my-react-app
+        npm test
+
+    - name: Lint JavaScript code
+      run: |
+        cd TicketArenaFrontend/my-react-app
+        npm run lint
+
+  backend:
+    name: Test Django Backend
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: django
+          POSTGRES_PASSWORD: django
+          POSTGRES_DB: django_db
+        ports:
+          - 8000:8000
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: Python 3.12.8
+
+    - name: Install dependencies
+      run: |
+        cd TicketArenabackend/backend
+        pip install -r requirements.txt
+
+    - name: Run migrations
+      run: |
+        cd TicketArenabackend/backend
+        python manage.py migrate
+
+    - name: Run tests
+      run: |
+        cd TicketArenabackend/backend
+        python manage.py test
+
+    - name: Lint Python code
+      run: |
+        cd TicketArenabackend/backend
+        pip install flake8
+        flake8 .
