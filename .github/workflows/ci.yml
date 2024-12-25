@@ -11,7 +11,7 @@ on:
 jobs:
    frontend:
     name: Build and Test React Frontend
-    runs-on: windows-2019
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout code
@@ -45,7 +45,7 @@ jobs:
 
    backend:
     name: Test Django Backend
-    runs-on: windows-2019
+    runs-on: ubuntu-22.04
 
     services:
       postgres:
