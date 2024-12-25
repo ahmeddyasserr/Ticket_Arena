@@ -11,7 +11,7 @@ on:
 jobs:
    frontend:
     name: Build and Test React Frontend
-    runs-on: ubuntu-22.04
+    runs-on: windows-2019
 
     steps:
     - name: Checkout code
@@ -45,7 +45,7 @@ jobs:
 
    backend:
     name: Test Django Backend
-    runs-on: ubuntu-22.04
+    runs-on: windows-2019
 
     services:
       postgres:
@@ -69,7 +69,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.10
+        python-version: 3.11
 
     - name: Install dependencies
       run: |
