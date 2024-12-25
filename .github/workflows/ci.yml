@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  frontend:
+   frontend:
     name: Build and Test React Frontend
     runs-on: ubuntu-22.04
 
@@ -20,7 +20,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 20.18.0
+        node-version: 18  
 
     - name: Install dependencies
       run: |
@@ -32,12 +32,18 @@ jobs:
         cd TicketArenaFrontend/my-react-app
         npm test
 
+    - name: Build project
+      run: |
+        cd TicketArenaFrontend/my-react-app
+        npm run build
+
     - name: Lint JavaScript code
       run: |
         cd TicketArenaFrontend/my-react-app
         npm run lint
 
-  backend:
+
+   backend:
     name: Test Django Backend
     runs-on: ubuntu-22.04
 
@@ -63,7 +69,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: Python 3.10
+        python-version: 3.10
 
     - name: Install dependencies
       run: |
