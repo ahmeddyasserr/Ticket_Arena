@@ -73,21 +73,21 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd TicketArenabackend/backend
+        cd TicketArenabackend/backend/backend
         pip install -r requirements.txt
 
     - name: Run migrations
       run: |
-        cd TicketArenabackend/backend
+        cd TicketArenabackend/backend/backend
         python manage.py migrate
 
     - name: Run tests
       run: |
-        cd TicketArenabackend/backend
+        cd TicketArenabackend/backend/backend
         python manage.py test
 
     - name: Lint Python code
       run: |
-        cd TicketArenabackend/backend
+        cd TicketArenabackend/backend/backend
         pip install flake8
         flake8 .
