@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 
-// API Configuration
+// API keys
 const API_KEY = "873e88d9711648454f6eeafb3d8fe5aa";
 const API_HOST = "v3.football.api-sports.io";
 
-// Main Component
+
 function FootballStandings() {
   const [standings, setStandings] = useState([]);
-  const [league, setLeague] = useState("39"); // Default: Premier League
-  const [season, setSeason] = useState("2022"); // Default: 2022
+  const [league, setLeague] = useState("39"); 
+  const [season, setSeason] = useState("2022");
 
-  // League and Season Options
+ 
   const leagues = {
     "39": "Premier League",
     "140": "La Liga",
@@ -37,7 +37,7 @@ function FootballStandings() {
       });
   };
 
-  // Fetch standings whenever league or season changes
+ 
   useEffect(() => {
     fetchStandings();
   }, [league, season]);

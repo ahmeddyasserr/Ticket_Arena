@@ -6,10 +6,10 @@ const Tickets = () => {
   const location = useLocation();
   const { match, categories } = location.state || {};
 
-  const [message, setMessage] = useState(null); // To display success/error messages
-  const [user] = useState(JSON.parse(localStorage.getItem("user"))); // User from localStorage
+  const [message, setMessage] = useState(null); 
+  const [user] = useState(JSON.parse(localStorage.getItem("user"))); 
 
-  const BASE_URL = "http://127.0.0.1:8000"; // Base URL for API calls
+  const BASE_URL = "http://127.0.0.1:8000"; 
 
   if (!match) {
     return <p className="text-danger text-center">Match not found.</p>;
@@ -26,7 +26,7 @@ const Tickets = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${user.token}`, // Use token from the user object
+          Authorization: `Token ${user.token}`, 
         },
         body: JSON.stringify({ item_id: categoryId, quantity: quantity }),
       });
@@ -38,7 +38,7 @@ const Tickets = () => {
         setMessage(data.error || "Failed to add tickets to cart.");
       }
 
-      // Clear the message after 3 seconds
+      
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
       console.error("Error booking ticket:", error);
@@ -60,7 +60,7 @@ const Tickets = () => {
       )}
 
       <div className="d-flex align-items-start justify-content-between mb-4">
-        {/* Left Section: Team Logos and Details */}
+       
         <div className="text-center flex-grow-1">
           <img
             src={`${BASE_URL}${match.team1_logo}`}
@@ -80,10 +80,10 @@ const Tickets = () => {
           </p>
         </div>
 
-        {/* Right Section: Stadium Image */}
+       
         <div className="flex-shrink-0 text-center ms-4">
           <img
-            src="/imgs/stadium.png" // Path to the stadium image
+            src="/imgs/stadium.png" 
             alt="Stadium Layout"
             className="img-fluid rounded shadow"
             style={{
@@ -98,7 +98,7 @@ const Tickets = () => {
         </div>
       </div>
 
-      {/* Categories Table */}
+     
       <div className="row">
         <div className="col-md-12">
           <table className="table table-striped table-hover">

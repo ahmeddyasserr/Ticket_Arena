@@ -7,7 +7,7 @@ const News = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/news/"); // Adjust API URL
+        const response = await fetch("http://127.0.0.1:8000/news/"); 
         const data = await response.json();
         setNews(data);
         setLoading(false);

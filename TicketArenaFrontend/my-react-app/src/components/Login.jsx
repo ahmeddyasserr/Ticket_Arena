@@ -28,7 +28,7 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         setMessage("Login successful! Redirecting...");
-        setIsSuccess(true); // Indicate success
+        setIsSuccess(true); 
         localStorage.setItem("user",JSON.stringify(data));
         
         setTimeout(() => {
@@ -39,11 +39,11 @@ function Login() {
       } else {
         const errorData = await response.json();
         setMessage(errorData.error || "Invalid credentials.");
-        setIsSuccess(false); // Indicate error
+        setIsSuccess(false); 
       }
     } catch (error) {
       setMessage("Network error occurred.");
-      setIsSuccess(false); // Indicate error
+      setIsSuccess(false); 
       console.error("Error:", error);
     }
   };

@@ -8,7 +8,7 @@ const Highlights = () => {
   const [highlights, setHighlights] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch highlight data from the API
+
   useEffect(() => {
     const fetchHighlights = async () => {
       try {
@@ -57,7 +57,7 @@ const Highlights = () => {
           <p className="text-center text-muted">No highlights available.</p>
         )}
       </Container>
-      {/* Footer */}
+  
       <footer className="text-center my-2">
         Copyright &copy; 2024 - All rights reserved To Ticket Arena.
       </footer>

@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Button, Alert } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Alert, Form } from "react-bootstrap";
 
 function Shop() {
-  const [items, setItems] = useState([]); // Shop items
-  const [loading, setLoading] = useState(true); // Loading state
-  const [user] = useState(JSON.parse(localStorage.getItem("user"))); // User from localStorage
-  const [message, setMessage] = useState(null); // Message state for feedback
+  const [items, setItems] = useState([]); 
+  const [filteredItems, setFilteredItems] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [user] = useState(JSON.parse(localStorage.getItem("user"))); 
+  const [message, setMessage] = useState(null); 
+  const [searchQuery, setSearchQuery] = useState(""); 
+  const [selectedCategory, setSelectedCategory] = useState("All"); 
 
   const BASE_URL = "http://127.0.0.1:8000";
 
-  // Fetch shop items
+  
   useEffect(() => {
     async function fetchShopItems() {
       try {
         const response = await fetch(`${BASE_URL}/shop/`);
         const data = await response.json();
         setItems(data);
+        setFilteredItems(data); 
         setLoading(false);
       } catch (error) {
         console.error("Error fetching shop items:", error);
@@ -26,7 +30,7 @@ function Shop() {
     fetchShopItems();
   }, []);
 
-  // Add to shop cart
+  
   const addToShopCart = async (itemId) => {
     if (!user || !user.token) {
       setMessage("You must be logged in to add items to the shop cart.");
@@ -39,9 +43,9 @@ function Shop() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Token ${user.token}`, // Use token from the user object
+          Authorization: `Token ${user.token}`, 
         },
-        body: JSON.stringify({ item_id: itemId, quantity: 1 }), // Request body
+        body: JSON.stringify({ item_id: itemId, quantity: 1 }), 
       });
 
       if (response.ok) {
@@ -51,13 +55,43 @@ function Shop() {
         setMessage(`Error: ${errorData.error || "Unable to add to shop cart."}`);
       }
 
-      // Clear the message after 3 seconds
+      
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
       console.error("Network error adding to shop cart:", error);
       setMessage("An error occurred. Please try again.");
       setTimeout(() => setMessage(null), 3000);
     }
+  };
+
+  
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    filterItems(query, selectedCategory);
+  };
+
+ 
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    filterItems(searchQuery, category);
+  };
+
+ 
+  const filterItems = (query, category) => {
+    let filtered = items;
+
+    if (category !== "All") {
+      filtered = filtered.filter((item) => item.category === category);
+    }
+
+    if (query) {
+      filtered = filtered.filter((item) =>
+        item.name.toLowerCase().includes(query)
+      );
+    }
+
+    setFilteredItems(filtered);
   };
 
   return (
@@ -71,11 +105,35 @@ function Shop() {
         </Alert>
       )}
 
+      {/* Search and Filter Options */}
+      <Row className="mb-4">
+        <Col md={6}>
+          <Form.Control
+            type="text"
+            placeholder="Search items..."
+            value={searchQuery}
+            onChange={handleSearch}
+          />
+        </Col>
+        <Col md={6}>
+          <Form.Select
+            value={selectedCategory}
+            onChange={(e) => handleCategoryChange(e.target.value)}
+          >
+            <option value="All">All Categories</option>
+            <option value="T-Shirt">T-Shirt</option>
+            <option value="Shoes">Shoes</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Others">Others</option>
+          </Form.Select>
+        </Col>
+      </Row>
+
       {loading ? (
         <p className="text-center text-muted">Loading items...</p>
-      ) : items.length > 0 ? (
+      ) : filteredItems.length > 0 ? (
         <Row xs={1} md={2} lg={3} className="g-4">
-          {items.map((item) => (
+          {filteredItems.map((item) => (
             <Col key={item.id}>
               <Card className="h-100 shadow-sm">
                 <Card.Img

@@ -7,8 +7,8 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [league, setLeague] = useState(""); // New state for selected league
-  const [favoriteTeam, setFavoriteTeam] = useState(""); // New state for favorite team
+  const [league, setLeague] = useState(""); 
+  const [favoriteTeam, setFavoriteTeam] = useState(""); 
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ function Signup() {
   const leagues = {
     "Premier League": ["Chelsea", "Manchester United", "Manchester City", "Tottenham", "Liverpool", "Arsenal"],
     "Ligue 1": ["Paris Saint-Germain"],
-    Bundesliga: ["Bayern Munich", "Borussia Dortmund", "Bayer Leverkusen"],
+    "Bundesliga": ["Bayern Munich", "Borussia Dortmund", "Bayer Leverkusen"],
     "Serie A": ["Inter Milan", "AC Milan", "Napoli", "Juventus", "Roma","Como"],
     "La Liga": ["Barcelona", "Real Madrid", "Atletico Madrid"],
   };
@@ -42,7 +42,7 @@ function Signup() {
           password,
           confirm_password: confirmPassword,
           league,
-          favorite_team: favoriteTeam, // Send the selected league and team
+          favorite_team: favoriteTeam,
         }),
       });
 

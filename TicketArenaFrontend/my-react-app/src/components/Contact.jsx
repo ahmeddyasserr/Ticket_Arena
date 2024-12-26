@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
-import '../index.css'; // Custom styles for the contact page
+import '../index.css'; 
 
 const Contact = () => {
-  const [showConfirmation, setShowConfirmation] = useState(false); // State for showing confirmation message
-  const [submittedName, setSubmittedName] = useState(""); // State to store the name for the success message
+  const [showConfirmation, setShowConfirmation] = useState(false); 
+  const [submittedName, setSubmittedName] = useState(""); 
   const [formValues, setFormValues] = useState({
     name: "",
     email: "",
@@ -19,20 +19,19 @@ const Contact = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Set the name for the confirmation message
+    
     setSubmittedName(formValues.name);
 
-    // Show confirmation message
+    
     setShowConfirmation(true);
 
-    // Optionally clear the form after submission
+    
     setFormValues({
       name: "",
       email: "",
       message: "",
     });
 
-    // Automatically hide the confirmation message after a few seconds
     setTimeout(() => setShowConfirmation(false), 5000);
   };
 

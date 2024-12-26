@@ -33,8 +33,6 @@ class OrderInline(admin.TabularInline):
     model = Order
     extra = 0
     readonly_fields = ('confirmation_number', 'ordered_at', 'status', 'calculate_total')
-
-# Order Admin
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('user', 'confirmation_number', 'status', 'ordered_at', 'calculate_total')

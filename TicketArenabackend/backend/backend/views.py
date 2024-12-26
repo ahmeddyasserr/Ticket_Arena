@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from .models import Match, Category, Highlight, MatchTicket, Order, CartItem, Profile, News,ShopItem
 from django.db import transaction
 import random
-import string  # Ensure this is imported if you're using `string` for random choices
+import string  
 
 
 
@@ -26,8 +26,8 @@ from .serializers import (
     ShopItemSerializer,
     CartItemSerializer
 )
-from django.db import transaction
 
+#sign up
 
 @api_view(['POST'])
 def signup(request):
@@ -52,7 +52,7 @@ def signup(request):
         if User.objects.filter(email=email).exists():
             return JsonResponse({"error": "Email already exists."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Use transaction to ensure atomicity
+       
         with transaction.atomic():
             # Create user
             user = User.objects.create_user(username=username, email=email, password=password)
@@ -173,74 +173,33 @@ def get_highlights(request):
     serializer = HighlightSerializer(highlights, many=True)
     return Response(serializer.data)
 
-# Cart Management
-@api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def get_cart_items(request):
-    cart_items = CartItem.objects.filter(user=request.user)
-    serializer = CartItemSerializer(cart_items, many=True)
-    return Response(serializer.data)
 
-@api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def add_to_cart(request):
-    serializer = CartItemSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save(user=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['DELETE'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def remove_from_cart(request, item_id):
-    try:
-        item = CartItem.objects.get(id=item_id, user=request.user)
-        item.delete()
-        return Response({"message": "Item removed from cart."}, status=status.HTTP_200_OK)
-    except CartItem.DoesNotExist:
-        return Response({"error": "Item not found."}, status=status.HTTP_404_NOT_FOUND)
-
-# Get User Tickets
-@api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def get_user_tickets(request):
-    tickets = MatchTicket.objects.filter(user=request.user)
-    serializer = MatchTicketSerializer(tickets, many=True)
-    return Response(serializer.data)
-
-# Get User Orders
-@api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def get_user_orders(request):
-    orders = Order.objects.filter(user=request.user)
-    serializer = OrderSerializer(orders, many=True)
-    return Response(serializer.data)
-
-# Add Order
-@api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def add_order(request):
-    serializer = OrderSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save(user=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# Get User Profile
-@api_view(['GET'])
+@api_view(['GET', 'PUT'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_user_profile(request):
-    profile = request.user.profile
-    serializer = UserSerializer(profile.user)
-    return Response(serializer.data)
+    if request.method == 'GET':
+        profile = request.user.profile
+        return Response({
+            "username": request.user.username,
+            "email": request.user.email,
+            "league": profile.league,
+            "favorite_team": profile.favorite_team,
+        })
 
+    elif request.method == 'PUT':
+        data = request.data
+        profile = request.user.profile
+        request.user.username = data.get('username', request.user.username)
+        request.user.email = data.get('email', request.user.email)
+        profile.league = data.get('league', profile.league)
+        profile.favorite_team = data.get('favorite_team', profile.favorite_team)
+        request.user.save()
+        profile.save()
+        return Response({"message": "Profile updated successfully."}, status=status.HTTP_200_OK)
+
+
+#news api
 @api_view(['GET'])
 def get_news(request):
     news_items = News.objects.all()
@@ -248,22 +207,24 @@ def get_news(request):
     return Response(serializer.data)
 
 
-
+# shop items
 @api_view(['GET'])
 def get_shop_items(request):
-    """Fetch all shop items."""
+    
     try:
         shop_items = ShopItem.objects.all()
         serializer = ShopItemSerializer(shop_items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
+# add shop items to the cart
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def add_to_shop_cart(request):
-    """Add shop items to the shop cart."""
+    
     try:
         user = request.user
         if not user.is_authenticated:
@@ -308,12 +269,12 @@ def add_to_shop_cart(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
+# remove shop items from the cart
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def remove_from_shop_cart(request, item_id):
-    """Remove shop items from the shop cart and restore stock."""
+   
     try:
         user = request.user
         if not user.is_authenticated:
@@ -336,12 +297,12 @@ def remove_from_shop_cart(request, item_id):
     
 
 
-
+#add tickets to the cart
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def add_to_ticket_cart(request):
-    """Add match tickets to the ticket cart."""
+    
     try:
         user = request.user
 
@@ -391,11 +352,12 @@ def add_to_ticket_cart(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+#delete tickets from the cart
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def remove_from_ticket_cart(request, item_id):
-    """Remove match tickets from the ticket cart and restore available seats."""
+    
     try:
         user = request.user
         if not user.is_authenticated:
@@ -419,11 +381,12 @@ def remove_from_ticket_cart(request, item_id):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+#cart 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_carts(request):
-    """Fetch items in both the shop and ticket carts."""
+    
     try:
         user = request.user
 
@@ -443,12 +406,14 @@ def get_carts(request):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
+
+#checkout
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def checkout(request):
-    """Process the checkout and save cart details in the order."""
+    
     try:
         user = request.user
         confirmation_number = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
@@ -505,11 +470,18 @@ def checkout(request):
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# views.py
+# orders
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_user_orders(request):
-    user_orders = Order.objects.filter(user=request.user)
-    serialized_orders = [order.serialize_order_details() for order in user_orders]
+    orders = Order.objects.filter(user=request.user)
+    serialized_orders = []
+    for order in orders:
+        serialized_orders.append({
+            "confirmation_number": order.confirmation_number,
+            "status": order.status,
+            "items": order.cart_details,  
+            "total_price": order.calculate_total(),
+        })
     return Response(serialized_orders, status=status.HTTP_200_OK)

@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'backend',  
 ]
 
-# Middleware
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -40,10 +40,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# URL configuration
 ROOT_URLCONF = 'backend.urls'
 
-# Templates configuration
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -60,10 +58,10 @@ TEMPLATES = [
     },
 ]
 
-# WSGI application
+
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# Database configuration
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -71,7 +69,7 @@ DATABASES = {
     }
 }
 
-# Password validation
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -85,16 +83,16 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static and media files
+
 STATIC_URL = '/static/'
 
-MEDIA_URL = '/media/'  # URL for media files (e.g., uploaded logos)
-MEDIA_ROOT = BASE_DIR / 'media'  # Directory for uploaded media files
+MEDIA_URL = '/media/'  
+MEDIA_ROOT = BASE_DIR / 'media'  
 
-# Default primary key field type
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS settings for development
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
@@ -107,7 +105,7 @@ CORS_ALLOW_HEADERS = [
     "content-type", "authorization",
 ]
 
-# Django REST Framework settings
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -117,7 +115,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-# Debug logging (for development only)
+
 if DEBUG:
     LOGGING = {
         'version': 1,

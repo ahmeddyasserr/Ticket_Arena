@@ -41,8 +41,12 @@ urlpatterns = [
     # Checkout API
     path('checkout/', views.checkout, name='checkout'),
 
-    # User Orders API
-    path('user/orders/', views.get_user_orders, name='user_orders'),
+
+
+     # Profile APIs
+    path('api/user/profile/', views.get_user_profile, name='user_profile'),
+        # User Orders API
+    path('api/user/orders/', views.get_user_orders, name='user_orders'),
 ]
 
 # Serve media files during development

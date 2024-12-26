@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
-  const [user] = useState(JSON.parse(localStorage.getItem("user"))); // User from localStorage
+  const [user] = useState(JSON.parse(localStorage.getItem("user"))); 
   const BASE_URL = "http://127.0.0.1:8000";
   const navigate = useNavigate();
 
@@ -78,7 +78,7 @@ const Cart = () => {
     );
   };
 
-  // Use the async version of handleCheckout and remove the redundant version
+
   const handleCheckout = async () => {
     try {
       const response = await fetch(`${BASE_URL}/checkout/`, {

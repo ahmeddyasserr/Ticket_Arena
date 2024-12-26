@@ -6,7 +6,7 @@ import { useNavigate, Link } from "react-router-dom";
 function App() {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   // Fetch matches data from the API
   useEffect(() => {

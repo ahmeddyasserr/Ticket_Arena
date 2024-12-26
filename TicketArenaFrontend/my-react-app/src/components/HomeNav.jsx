@@ -20,16 +20,16 @@ function HomeNav() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Token ${token}`, // Include the token in the header
+        Authorization: `Token ${token}`,
       },
     })
       .then((response) => {
         if (response.ok) {
-          // Remove the token from localStorage and update state on success
+          
           localStorage.removeItem("user");
           setUser(null);
         } else {
-          // Handle errors
+          
           return response.json().then((data) => {
             console.error("Error:", data);
           });
